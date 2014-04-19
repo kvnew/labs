@@ -6,21 +6,34 @@
 //  4. label the used pivot cell. After a pivot is selected and finished
 //     partition work, label it in the other array.
 
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
 #include <stack>
 #include <vector>
-#include <algorithm>
-#include <cstdlib>
 
 using namespace std;
 
+
+class Sorter {
+ public:
+  void QuickSort(vector<int> &array);
+ private:
+  int Partition(vector<int> &a, int low, int high);
+  void SortByStack(vector<int> &array);
+};
+
+void Sorter::QuickSort(vector<int> &array) {
+  SortByStack(array);
+}
+
 // pivot's left is less than right.
-int Partition(vector<int> &a, int low, int high){
+int Sorter::Partition(vector<int> &a, int low, int high) {
   int pivot = a[low];
   while (low < high) {
-    while(low<high && a[high] >= pivot) high--;
+    while(low < high && a[high] >= pivot) high--;
     a[low] = a[high];
-    while(low<high && a[low] < pivot) low++;
+    while(low < high && a[low] < pivot) low++;
     a[high] = a[low];
   }
   //now low==high
@@ -28,7 +41,7 @@ int Partition(vector<int> &a, int low, int high){
   return low;
 }
 
-void SortByStack(vector<int> &array) {
+void Sorter::SortByStack(vector<int> &array) {
   if (array.size() <= 1) return;
 
   stack<pair<int, int> > st;
@@ -55,11 +68,12 @@ void Print(const vector<int> array) {
 
 int main(int argv, char** argc) {
   int n = 10;
+  Sorter sorter;
   vector<int> array;
   for(int i = 0; i < n; ++i) array.push_back(rand() % 1000);
   random_shuffle(array.begin(),array.end());
   clock_t t1 = clock();
-  SortByStack(array);
+  sorter.QuickSort(array);
   clock_t t2 = clock();
   Print(array);
   cout << "Cost time: "<< 1.0 * (t2 - t1) / CLOCKS_PER_SEC << " s."<< endl;
