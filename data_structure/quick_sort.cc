@@ -1,3 +1,11 @@
+// Quick Sort.
+// Method:
+//  1. Use recursive.
+//  2. Use stack.
+//  3. Use queue.
+//  4. label the used pivot cell. After a pivot is selected and finished
+//     partition work, label it in the other array.
+
 #include <iostream>
 #include <stack>
 #include <vector>
@@ -6,9 +14,7 @@
 
 using namespace std;
 
-
-
-// 轴pivot左边小于右边
+// pivot's left is less than right.
 int Partition(vector<int> &a, int low, int high){
   int pivot = a[low];
   while (low < high) {
@@ -17,30 +23,20 @@ int Partition(vector<int> &a, int low, int high){
     while(low<high && a[low] < pivot) low++;
     a[high] = a[low];
   }
-  //low==high
+  //now low==high
   a[low] = pivot;
   return low;
 }
 
 void SortByStack(vector<int> &array) {
-  stack<pair<int, int> > st;
-  int low, high;
-
   if (array.size() <= 1) return;
-  low = 0;
-  high = array.size() - 1;
 
-  int pivot = Partition(array, low, high);
-  if(low < pivot - 1){
-    st.push(make_pair<int, int>(low, pivot - 1));
-  }
-  if(pivot + 1 < high){
-    st.push(make_pair<int, int>(pivot + 1, high));
-  }
+  stack<pair<int, int> > st;
+  st.push(make_pair<int, int>(0, array.size() - 1));
   while(!st.empty()){
     pair<int, int> index = st.top();
     st.pop();
-    pivot = Partition(array, index.first, index.second);
+    int pivot = Partition(array, index.first, index.second);
     if(index.first < pivot - 1) {
       st.push(make_pair<int, int>(index.first, pivot - 1));
     }
@@ -61,13 +57,12 @@ int main(int argv, char** argc) {
   int n = 10;
   vector<int> array;
   for(int i = 0; i < n; ++i) array.push_back(rand() % 1000);
+  random_shuffle(array.begin(),array.end());
   clock_t t1 = clock();
   SortByStack(array);
   clock_t t2 = clock();
   Print(array);
-  cout<<"Cost time: "<< 1.0 * (t2 - t1) / CLOCKS_PER_SEC << " s."<< endl;
-
-  random_shuffle(array.begin(),array.end());
+  cout << "Cost time: "<< 1.0 * (t2 - t1) / CLOCKS_PER_SEC << " s."<< endl;
 
   return 0;
 }
